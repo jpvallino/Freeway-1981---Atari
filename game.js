@@ -330,66 +330,46 @@ function drawCar(car) {
     const cy = Math.floor(car.y);
     const hw = Math.floor(car.width / 2);
     const hh = Math.floor(car.height / 2);
-    const goingRight = car.speed > 0;
+    const p = PX;
 
-    // Corpo principal — bloco sólido
-    px(cx - hw, cy - hh, car.width, car.height, car.color);
+    // Corpo do carro ( Activision / Atari Style)
+    // Um bloco sólido com recortes nas rodas
+    px(cx - hw, cy - hh + p, car.width, car.height - p * 2, car.color);
+    
+    // Rodas saltadas
+    px(cx - hw + p, cy - hh, p * 2, p, car.color); // superior esq
+    px(cx + hw - p * 3, cy - hh, p * 2, p, car.color); // superior dir
+    px(cx - hw + p, cy + hh - p, p * 2, p, car.color); // inferior esq
+    px(cx + hw - p * 3, cy + hh - p, p * 2, p, car.color); // inferior dir
 
-    // Faixa central mais escura (simula janelas como no Atari)
-    const stripeH = PX;
-    px(cx - hw, cy - Math.floor(stripeH / 2), car.width, stripeH, PAL.black);
-
-    // Para-choque dianteiro (branco, 1 pixel de largura)
-    if (goingRight) {
-        px(cx + hw - PX, cy - hh, PX, car.height, PAL.white);
-    } else {
-        px(cx - hw, cy - hh, PX, car.height, PAL.white);
-    }
+    // Detalhe central (cabine)
+    px(cx - p * 2, cy - p, p * 4, p * 2, 'rgba(0,0,0,0.3)');
 }
 
 // ---- DESENHO DA GALINHA (ATARI STYLE) ----
-// Sprite mínimo: ~5x8 "pixels" Atari (cada "pixel" = PX unidades)
 function drawChicken() {
     // Piscar ao ser atingido
     if (hitBlinkFrames > 0 && Math.floor(hitBlinkFrames / 3) % 2 === 0) return;
 
     const cx = Math.floor(player.x);
     const cy = Math.floor(getPlayerY());
+    const p = PX;
 
-    // A galinha é desenhada com blocos de PXxPX
-    // Layout (cada célula = PX pixels):
-    //     [C]          <- crista (vermelha)
-    //    [H H]         <- cabeça (amarela) com olho
-    //    [HHH]         <- cabeça
-    //   [BBBBB]        <- corpo
-    //   [BBBBB]        <- corpo
-    //   [BBBBB]        <- corpo
-    //    [L L]         <- pernas
-
-    const p = PX; // atalho
-
-    // Crista (vermelha) — 1 bloco no topo
-    px(cx - p * 0.5, cy - p * 4, p, p, PAL.comb);
-    px(cx - p * 1.5, cy - p * 3, p, p, PAL.comb);
-    px(cx - p * 0.5, cy - p * 3, p, p, PAL.comb);
-
-    // Cabeça (amarela) — 3 blocos de largura
-    px(cx - p * 1.5, cy - p * 2, p * 3, p * 2, PAL.chicken);
-
-    // Olho — 1 bloco escuro
-    px(cx + p * 0.5, cy - p * 2, p, p, PAL.black);
-
-    // Bico (laranja) — 1 bloco saindo
-    px(cx + p * 1.5, cy - p * 1, p, p, PAL.beak);
-
-    // Corpo (amarelo mais claro) — 5 blocos de largura, 3 de altura
-    px(cx - p * 2.5, cy, p * 5, p * 3, PAL.chicken);
-    // Asa — um tom mais escuro
-    px(cx - p * 2.5, cy + p, p, p * 2, PAL.chickenDark);
-
-    // Pernas (laranja) — 2 blocos
-    px(cx - p * 1.5, cy + p * 3, p, p * 1, PAL.legs);
-    px(cx + p * 0.5, cy + p * 3, p, p * 1, PAL.legs);
+    // Galinha clássica Atari 2600 (Silhueta amarela sólida)
+    // Uma forma de "pássaro" minimalista
+    
+    // Cabeça / Pescoço
+    px(cx - p * 0.5, cy - p * 3, p, p * 2, PAL.chicken);
+    px(cx + p * 0.5, cy - p * 2, p, p, PAL.chicken); // bico
+    
+    // Corpo
+    px(cx - p * 2.5, cy - p, p * 5, p * 2, PAL.chicken);
+    
+    // Parte inferior do corpo / rabo
+    px(cx - p * 1.5, cy + p, p * 3, p, PAL.chicken);
+    
+    // Perna única central (estilo Atari)
+    px(cx - p * 0.5, cy + p * 2, p, p, PAL.chicken);
 }
 
 // ---- HUD (ATARI STYLE) ----
@@ -573,7 +553,7 @@ function drawGameOverScreen() {
         ctx.fillText('NEW RECORD!', W / 2, panelY + 158);
     } else {
         ctx.fillStyle = PAL.gray;
-        ctx.fillText('HI:' + highScore.toString().padStart(3, '0'), W / 2, panelY + 158);
+        ctx.fillText('HI:' + highScore.toString().padStart(2, '0'), W / 2, panelY + 158);
     }
 
     // Linha
